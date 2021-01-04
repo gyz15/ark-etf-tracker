@@ -2,6 +2,7 @@ from .models import ArkFund, ArkStock
 import pandas as pd
 import requests
 import os
+import json
 import urllib
 from datetime import date, timedelta
 from decimal import Decimal
