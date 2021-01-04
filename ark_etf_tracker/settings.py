@@ -32,7 +32,7 @@ else:
     DEBUG = True
 
 if config('ON_HEROKU', cast=int):
-    ALLOWED_HOSTS = [f"{cofig('DOMAIN')}"]
+    ALLOWED_HOSTS = [f"{config('DOMAIN')}"]
 else:
     ALLOWED_HOSTS = ["*"]
 
