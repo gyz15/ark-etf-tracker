@@ -7,6 +7,7 @@ import urllib
 from datetime import date, timedelta
 from decimal import Decimal
 from django.core.exceptions import ObjectDoesNotExist
+from decouple import config
 
 
 def find_ark():
