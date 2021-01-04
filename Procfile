@@ -1,1 +1,1 @@
-web: gunicorn django_telegram_bot.wsgi --log-file -
+web: gunicorn ark_etf_tracker.wsgi --log-file -
