@@ -9,7 +9,8 @@ from decimal import Decimal
 from django.core.exceptions import ObjectDoesNotExist
 from decouple import config
 
-
+BOT_TOKEN = config('BOT_TOKEN')
+URL = f"https://api.telegram.org/bot{BOT_TOKEN}/"
 def find_ark():
     # try:
     for stock in ArkStock.objects.all():
@@ -68,7 +69,7 @@ def find_ark():
         date_val = todays_date.strftime('%d/%m/%y')
         message = f'Changes of {etf.ticker} on {date_val}:'
         if sending_data['added'] != []:
-            message += "\n*Stocks newly added into the fund:*"
+            message += "\n*Stocks newly added into the fund（建倉）:*"
             for data in sending_data['added']:
                 message += f'''\n
 {data[0]}({data[1]})
@@ -78,7 +79,7 @@ Weight: {data[3]}%'''
             message += "\n\n*(No stocks were newly added)*"
         message += "\n\n----------------------------\n\n"
         if sending_data['removed'] != []:
-            message += "\n\n*Stocks removed from the fund:*"
+            message += "\n\n*Stocks removed from the fund（平倉）:*"
             for data in sending_data['removed']:
                 message += f'''\n
 {data[0]}({data[1]})
@@ -87,7 +88,7 @@ Shares sold: {data[2]}'''
             message += "\n*(No stocks were removed)*"
         message += "\n\n----------------------------\n\n"
         if sending_data['buying'] != []:
-            message += "\n*Stocks were bought by the fund:*"
+            message += "\n*Stocks were bought by the fund（加倉):*"
             for data in sending_data['buying']:
                 message += f'''\n
 {data[0]}({data[1]})
@@ -97,7 +98,7 @@ Weight: {data[4]}% (+{data[5]}%)'''
             message += "\n*(No stocks were bought)*"
         message += "\n\n----------------------------\n\n"
         if sending_data['selling'] != []:
-            message += "\n*Stocks were sold by the fund:*"
+            message += "\n*Stocks were sold by the fund(減倉):*"
             for data in sending_data['selling']:
                 message += f'''\n
 {data[0]}({data[1]})
@@ -178,7 +179,7 @@ def small_chunk(message):
     return formatted_message
 
 def send_markdown_text(text, chat_id):
-    text = urllib.parse.quote_plus(text, safe="*")
+    # text = urllib.parse.quote_plus(text, safe="*")
     url = URL + \
         f"sendMessage?text={text}&chat_id={chat_id}&parse_mode=Markdown"
     r = requests.get(url)
