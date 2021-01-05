@@ -16,10 +16,10 @@ URL = f"https://api.telegram.org/bot{BOT_TOKEN}/"
 
 def find_ark():
     # try:
-    for stock in ArkStock.objects.filter(update_now=True):
+    for stock in ArkStock.objects.all():
         stock.had_changes = False
         stock.save()
-    for etf in ArkFund.objects.all():
+    for etf in ArkFund.objects.filter(update_now=True):
         print(etf.ticker)
         with requests.get(etf.file_url, stream=True) as r:
             with open(f".\{etf.ticker}.csv", "wb") as f:
