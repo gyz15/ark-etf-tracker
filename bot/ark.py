@@ -146,17 +146,20 @@ Shares (new): {stock}
 Weight delta: {stock.weight_delta}
 ''')
         stock.save()
-        data = []
-        data.append(stock.company)
-        data.append(stock.ticker)
-        data.append(stock.shares)
-        data.append(stock.shares_delta_percent)
-        data.append(stock.weight)
-        data.append(stock.weight_delta)
-        if add:
-            sending_data['buying'].append(data)
+        if stock.shares_delta_percent <= Decimal(0.01) and stock.weight_delta <= Decimal(0.01):
+            pass
         else:
-            sending_data['selling'].append(data)
+            data = []
+            data.append(stock.company)
+            data.append(stock.ticker)
+            data.append(stock.shares)
+            data.append(stock.shares_delta_percent)
+            data.append(stock.weight)
+            data.append(stock.weight_delta)
+            if add:
+                sending_data['buying'].append(data)
+            else:
+                sending_data['selling'].append(data)
     else:
         pass
     return sending_data, stock
