@@ -4,6 +4,7 @@ from django.db import models
 class ArkFund(models.Model):
     ticker = models.CharField(max_length=4)
     file_url = models.URLField()
+    update_now = models.BooleanField(default=True)
 
     def __str__(self):
         return f'{self.ticker}'

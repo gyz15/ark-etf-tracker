@@ -9,11 +9,14 @@ from decimal import Decimal
 from django.core.exceptions import ObjectDoesNotExist
 from decouple import config
 
+MSG_ID = config('MSG_ID')
 BOT_TOKEN = config('BOT_TOKEN')
 URL = f"https://api.telegram.org/bot{BOT_TOKEN}/"
+
+
 def find_ark():
     # try:
-    for stock in ArkStock.objects.all():
+    for stock in ArkStock.objects.filter(update_now=True):
         stock.had_changes = False
         stock.save()
     for etf in ArkFund.objects.all():
@@ -108,7 +111,7 @@ Weight: {data[4]}% (-{data[5]}%)'''
             message += "\n*(No stocks were sold)*"
         message_list = small_chunk(message)
         for message in message_list:
-            send_markdown_text(message, config('MSG_ID'))
+            send_markdown_text(message, MSG_ID)
 
     # except Exception as e:
     #     print(e)
@@ -178,11 +181,13 @@ def small_chunk(message):
         message, safe="*") for message in message_list]
     return formatted_message
 
+
 def send_markdown_text(text, chat_id):
     # text = urllib.parse.quote_plus(text, safe="*")
     url = URL + \
         f"sendMessage?text={text}&chat_id={chat_id}&parse_mode=Markdown"
     r = requests.get(url)
+
 
 def is_valid_action_request(request):
     try:
