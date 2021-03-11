@@ -1,6 +1,7 @@
 from .models import ArkFund, ArkStock
 import pandas as pd
 import requests
+import cloudscraper
 import os
 import json
 import urllib
@@ -13,21 +14,25 @@ MSG_ID = config('MSG_ID')
 BOT_TOKEN = config('BOT_TOKEN')
 URL = f"https://api.telegram.org/bot{BOT_TOKEN}/"
 
+# TODO Determine need to loop through by seeing date.
+# TODO Make format easier to read
+
 
 def find_ark():
     # try:
+    scraper = cloudscraper.create_scraper()
     for stock in ArkStock.objects.all():
         stock.had_changes = False
         stock.save()
     for etf in ArkFund.objects.filter(update_now=True):
         print(etf.ticker)
-        with requests.get(etf.file_url, stream=True) as r:
+        with scraper.get(etf.file_url, stream=True) as r:
             with open(f".\{etf.ticker}.csv", "wb") as f:
                 for chunk in r.iter_content(chunk_size=8192):
                     if chunk:
                         f.write(chunk)
         new_data = pd.read_csv(
-            f".\{etf.ticker}.csv", parse_dates=[0], dayfirst=True, skipfooter=3, engine='python')
+            f".\{etf.ticker}.csv", parse_dates=[0], dayfirst=True, skipfooter=3, engine='python',)
         sending_data = {"added": [], "removed": [],
                         "buying": [], "selling": []}
         new_data.fillna("-", inplace=True)
